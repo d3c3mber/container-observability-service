@@ -69,6 +69,7 @@ func newRootCmd() *cobra.Command {
 	// for server listen port
 	cmd.PersistentFlags().StringVarP(&config.MetricsAddr, "metrics-addr", "", ":9091", "metrics listen address (default :9091)")
 	cmd.PersistentFlags().StringVarP(&config.ListenAddr, "listen-addr", "", ":8080", "api server listen address (default :8080)")
+	cmd.PersistentFlags().StringVarP(&config.ListenAddr, "listen-auth-addr", "", ":8081", "api server listen address (default :8081)")
 
 	// for storage
 	cmd.PersistentFlags().StringVarP(&cfgFile, "config-file", "", "/app/storage-config.yaml", "storage config file")
