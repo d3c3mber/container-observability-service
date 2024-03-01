@@ -69,7 +69,7 @@ func (s *Server) StartServer(stopCh chan struct{}) {
 
 		err := http.ListenAndServe(s.Config.ListenAddr, r)
 		if err != nil {
-			klog.Errorf("failed to ListenAndServe, err:%s", err.Error())
+			klog.Errorf("failed to ListenAndServe at ListenAddr %s, err:%s", s.Config.ListenAddr, err.Error())
 			panic(err.Error())
 		}
 	}()
@@ -85,7 +85,7 @@ func (s *Server) StartServer(stopCh chan struct{}) {
 
 		err := http.ListenAndServe(s.Config.ListenAuthAddr, r)
 		if err != nil {
-			klog.Errorf("failed to ListenAndServe, err:%s", err.Error())
+			klog.Errorf("failed to ListenAndServe at ListenAuthAddr %s, err:%s", s.Config.ListenAuthAddr, err.Error())
 			panic(err.Error())
 		}
 	}()

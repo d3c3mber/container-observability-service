@@ -53,8 +53,9 @@ func newRootCmd() *cobra.Command {
 			}
 
 			serverConfig := &server.ServerConfig{
-				ListenAddr: config.ListenAddr,
-				Storage:    storage,
+				ListenAddr:     config.ListenAddr,
+				ListenAuthAddr: config.ListenAuthAddr,
+				Storage:        storage,
 			}
 			hcsServer, err := server.NewAPIServer(serverConfig)
 			if err != nil {
