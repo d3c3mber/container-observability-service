@@ -80,7 +80,7 @@ func (s *Server) StartServer(stopCh chan struct{}) {
 
 		// federation api
 		r.Path("/debugpodlist").HandlerFunc(basicAuthWrapper(handlerWrapper(handler.DebugPodListFactory, s.Storage)))
-		r.Path("/fed-debugpodlist").HandlerFunc(handlerWrapper(handler.FedDebugPodListFactory, s.Storage))
+		r.Path("/fed-debugpodlist").HandlerFunc(basicAuthWrapper(handlerWrapper(handler.FedDebugPodListFactory, s.Storage)))
 		// federation api
 
 		err := http.ListenAndServe(s.Config.ListenAuthAddr, r)
