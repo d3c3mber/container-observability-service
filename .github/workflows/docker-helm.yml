@@ -11,7 +11,7 @@ env:
   DOCKERHUB_LUNETTES_REPO: d3c3mber/lunettes
   DOCKERHUB_GRAFANA_REPO: d3c3mber/grafana
   # Plugins to be installed.
-  GRAFANA_PLUGINS: yesoreyeram-infinity-datasource,marcusolsson-json-datasource,marcusolsson-dynamictext-panel
+  GRAFANA_PLUGINS: yesoreyeram-infinity-datasource,marcusolsson-json-datasource,marcusolsson-dynamictext-panel,volkovlabs-form-panel 3.1.0
 
 
 jobs:
@@ -40,23 +40,23 @@ jobs:
       # Use the git command to retrieve the current tag information and store it in the environment variable APP_VERSION.
       - name: Generate App Version
         run: echo APP_VERSION=`git describe --tags --always` >> $GITHUB_ENV
-      - name: Build and push lunettes
-        id: docker_build_lunettes
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          file: build/docker/Dockerfile.lunettes
-          # Generate multi-platform images, see https://github.com/docker-library/bashbrew/blob/v0.1.1/architecture/oci-platform.go
-          platforms: |
-            linux/amd64
-            linux/arm64
-          # docker build arg
-          build-args: |
-            GOARCH=$(go env GOARCH)
-          # Generate two Docker tags: ${APP_VERSION} 和 latest
-          tags: |
-            ${{ env.DOCKERHUB_LUNETTES_REPO }}:latest
-            ${{ env.DOCKERHUB_LUNETTES_REPO }}:${{ env.APP_VERSION }}
+#      - name: Build and push lunettes
+#        id: docker_build_lunettes
+#        uses: docker/build-push-action@v2
+#        with:
+#          push: true
+#          file: build/docker/Dockerfile.lunettes
+#          # Generate multi-platform images, see https://github.com/docker-library/bashbrew/blob/v0.1.1/architecture/oci-platform.go
+#          platforms: |
+#            linux/amd64
+#            linux/arm64
+#          # docker build arg
+#          build-args: |
+#            GOARCH=$(go env GOARCH)
+#          # Generate two Docker tags: ${APP_VERSION} 和 latest
+#          tags: |
+#            ${{ env.DOCKERHUB_LUNETTES_REPO }}:latest
+#            ${{ env.DOCKERHUB_LUNETTES_REPO }}:${{ env.APP_VERSION }}
       - name: Build and push grafana
         id: docker_build_grafana
         uses: docker/build-push-action@v2
@@ -75,20 +75,20 @@ jobs:
             ${{ env.DOCKERHUB_GRAFANA_REPO }}:latest
             ${{ env.DOCKERHUB_GRAFANA_REPO }}:${{ env.APP_VERSION }}
 
-      - uses: azure/setup-helm@v3
-        id: install
-
-      - name: get epository name
-        run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
-
-      - name: helm package chart
-        run: |
-          sed -i 's/grafanaImage: lunettes\/grafana:latest/grafanaImage: lunettes\/grafana:${{ env.APP_VERSION }}/g' deploy/helm/lunettes/values.yaml
-          sed -i 's/lunettesImage: lunettes\/lunettes:latest/lunettesImage: lunettes\/lunettes:${{ env.APP_VERSION }}/g' deploy/helm/lunettes/values.yaml
-          helm package deploy/helm/lunettes --app-version=${{ env.APP_VERSION }} --version=${{ env.APP_VERSION }} -d _out
-
-      - name: helm push chart
-        # OCI artifacts on Docker Hub 
-        # see: https://docs.docker.com/docker-hub/oci-artifacts/
-        run: |
-          helm push _out/lunettes-chart-${{ env.APP_VERSION }}.tgz oci://${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_REGISTRY_NAMESPACE }}
+#      - uses: azure/setup-helm@v3
+#        id: install
+#
+#      - name: get epository name
+#        run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
+#
+#      - name: helm package chart
+#        run: |
+#          sed -i 's/grafanaImage: lunettes\/grafana:latest/grafanaImage: lunettes\/grafana:${{ env.APP_VERSION }}/g' deploy/helm/lunettes/values.yaml
+#          sed -i 's/lunettesImage: lunettes\/lunettes:latest/lunettesImage: lunettes\/lunettes:${{ env.APP_VERSION }}/g' deploy/helm/lunettes/values.yaml
+#          helm package deploy/helm/lunettes --app-version=${{ env.APP_VERSION }} --version=${{ env.APP_VERSION }} -d _out
+#
+#      - name: helm push chart
+#        # OCI artifacts on Docker Hub
+#        # see: https://docs.docker.com/docker-hub/oci-artifacts/
+#        run: |
+#          helm push _out/lunettes-chart-${{ env.APP_VERSION }}.tgz oci://${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_REGISTRY_NAMESPACE }}
